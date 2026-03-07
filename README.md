@@ -1,146 +1,132 @@
-# Ness Food - E-commerce Platform
+# Ness Food E-commerce Platform
 
-Bienvenue sur le dépôt de **Ness Food**, une plateforme e-commerce moderne spécialisée dans la vente de plats ivoiriens (Plakalidrom). Ce document est conçu pour aider les développeurs à comprendre l'architecture, à configurer l'environnement local et à contribuer au projet.
+Ness Food is a modern, full-stack e-commerce platform dedicated to culinary products. This repository contains the source code for both the user-facing storefront and the administrative backend.
 
----
+The platform is designed with a decoupled architecture, ensuring scalability, maintainability, and a seamless user experience.
 
-## 🏗️ Architecture du Projet
+## System Architecture
 
-Le projet suit une architecture **Fullstack découplée** :
+The project adopts a decoupled client-server architecture:
 
-- **Frontend** : Application mono-page (SPA) développée avec React (Vite).
-- **Backend** : API RESTful propulsée par Django & Django REST Framework (DRF).
-- **Cache** : Redis pour l'optimisation des requêtes API et des tâches de fond.
-- **Base de Données** : SQLite (Dev) / PostgreSQL (Prod).
+* **Frontend (Client)**: A Single Page Application (SPA) built with React and Vite. It leverages React Query for efficient data fetching and state management, and Axios for API communication.
+* **Backend (API)**: A RESTful API driven by Django and Django REST Framework (DRF). It handles business logic, database management, and authentication.
+* **Caching & Background Tasks**: Redis is utilized for backend caching and optimizing API response times.
+* **Database**: SQLite is provisioned for local development, with PostgreSQL targeted for production environments.
 
----
+## Technology Stack
 
-## 💻 Stack Technique Détaillée
+### Frontend
 
-### Frontend (`/frontend`)
+* **Core**: React 18, React Router v6
+* **Build System**: Vite
+* **API Client & State**: `axios`, `@tanstack/react-query`, React Context API
+* **Styling**: Vanilla CSS with a defined Design System (CSS variables)
+* **UI Assets**: `framer-motion` (animations), `react-hot-toast` (notifications)
 
-- **Core** : React 18, React Router v6
-- **Build Tool** : Vite
-- **Data Fetching & State** :
-  - `@tanstack/react-query` pour le cache et la synchronisation avec l'API
-  - `axios` (via une instance custom `apiClient.js` avec intercepteurs JWT)
-  - `Context API` (Auth, Cart, Products) pour l'état global natif
-- **Styling & UI** :
-  - CSS Vanilla (Design System et variables CSS dans `index.css`)
-  - `framer-motion` (Animations)
-  - `react-hot-toast` (Notifications)
+### Backend
 
-### Backend (`/backend`)
+* **Core**: Python 3.10+, Django 5.0
+* **API**: Django REST Framework (DRF)
+* **Authentication**: `djangorestframework-simplejwt` (JWT with refresh token rotation)
+* **Tools & Libraries**:
+  * `django-filter` (Advanced query filtering)
+  * `django-cors-headers` (CORS management)
+  * `Pillow` (Image processing and WebP generation)
+  * `redis` & `django-redis` (Caching layer)
+* **Administration**: `django-jazzmin` (Enhanced admin interface)
 
-- **Core** : Django 5.0, Python 3.10+
-- **API** : Django REST Framework (DRF)
-- **Authentification** : `djangorestframework-simplejwt` (Tokens JWT avec rotation)
-- **Outils** :
-  - `django-filter` (Filtrage avancé des querysets)
-  - `django-cors-headers` (Gestion CORS)
-  - `Pillow` (Traitement d'images et génération WebP)
-  - `redis` (Système de cache backend)
-- **Admin** : `django-jazzmin` pour un tableau de bord administrateur moderne.
-
----
-
-## 📂 Structure du Répertoire
+## Repository Structure
 
 ```text
 E-COMMERCE/
-├── backend/
-│   ├── apps/                    # Modules Django indépendants
-│   │   ├── cart/                # Logique du panier utilisateur
-│   │   ├── core/                # Modèles et utilitaires communs (ex: TimeStampedModel)
-│   │   ├── newsletter/          # Inscription newsletter
-│   │   ├── orders/              # Commandes et historique des statuts
-│   │   ├── payments/            # Intégration Stripe
-│   │   ├── products/            # Catalogue, tags, avis, conversion WebP
-│   │   └── users/               # Modèle Custom User, authentification
-│   ├── nessfood/                # Configuration globale (settings.py, urls.py)
-│   ├── requirements.txt         # Dépendances Python
-│   └── manage.py                # CLI Django
+├── backend/                    # Django API Application
+│   ├── apps/                   # Django independent applications
+│   │   ├── cart/               # Shopping cart logic 
+│   │   ├── core/               # Shared models and utilities
+│   │   ├── newsletter/         # Newsletter subscription management
+│   │   ├── orders/             # Order processing and status history
+│   │   ├── payments/           # Payment gateway integration (Stripe)
+│   │   ├── products/           # Product catalog, categories, tags, and reviews
+│   │   └── users/              # Custom user models and authentication
+│   ├── nessfood/               # Core Django configuration (settings, wsgi, asgi)
+│   ├── requirements.txt        # Python package dependencies
+│   └── manage.py               # Django command-line utility
 │
-├── frontend/
+├── frontend/                   # React Web Application
 │   ├── src/
-│   │   ├── components/          # Composants UI (Header, Footer, ProductCard, etc.)
-│   │   ├── context/             # React Contexts (AuthContext, CartContext)
-│   │   ├── hooks/               # Custom Hooks (ex: useProductsQuery)
-│   │   ├── pages/               # Vues principales de routage
-│   │   └── services/            # Pont API (fichiers isolés par domaine via apiClient Axios)
-│   └── package.json             # Dépendances Node.js
+│   │   ├── components/         # Reusable UI components
+│   │   ├── context/            # React Context providers (Auth, Cart, Products)
+│   │   ├── hooks/              # Custom React hooks (e.g., React Query hooks)
+│   │   ├── pages/              # Application routing views
+│   │   └── services/           # API integration layer (Axios instances and calls)
+│   └── package.json            # Node.js dependencies and scripts
 │
-└── docker-compose.yml           # Configuration Docker (Optionnelle pour dev local)
+├── docker-compose.yml          # Docker orchestration configuration (Optional)
+└── README.md                   # Project documentation
 ```
 
----
+## Getting Started (Local Development)
 
-## 🚀 Guide de Démarrage (Développement Local)
+The following instructions will help you set up the project on your local machine for development and testing purposes.
 
-Pour modifier le code et voir les résultats en direct, nous recommandons de lancer le backend et le frontend séparément sans Docker.
+### 1. Backend Setup
 
-### 1. Configuration du Backend
-
-Assurez-vous d'avoir Python 3.10+ et un serveur Redis local (ou Dockerisé) tournant sur le port 6379.
+Ensure you have **Python 3.10+** and a running instance of **Redis** (default port 6379) on your system.
 
 ```bash
-# Se rendre dans le dossier backend
+# Navigate to the backend directory
 cd backend
 
-# Créer et activer un environnement virtuel
+# Initialize and activate a Python virtual environment
 python -m venv venv
-source venv/Scripts/activate  # Sous Windows : venv\Scripts\activate
-# Sous Mac/Linux : source venv/bin/activate
 
-# Installer les dépendances
+# Windows
+venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
+
+# Install required Python packages
 pip install -r requirements.txt
 
-# Créer la base de données SQLite et appliquer les migrations
+# Apply database migrations
 python manage.py migrate
 
-# (Optionnel) Créer un superutilisateur pour accéder à l'admin
+# (Optional) Create an administrative user account
 python manage.py createsuperuser
 
-# Démarrer le serveur API (tourne sur http://127.0.0.1:8000)
+# Start the Django development server (runs on http://127.0.0.1:8000)
 python manage.py runserver
 ```
 
-> **Note sur les Tâches Cron** :
-Le backend dispose de scripts de maintenance (`delete_unpaid_orders`, `abandoned_carts_reminder`) situés dans les dossiers `management/commands` de leurs apps respectives. En local, exécutez-les manuellement via `python manage.py <nom_commande>`.
+> **Note on Background Tasks**: The backend includes maintenance scripts (`delete_unpaid_orders`, `abandoned_carts_reminder`). In a local environment without a task scheduler like Celery or Cron, these can be executed manually via `python manage.py <command_name>`.
 
-### 2. Configuration du Frontend
+### 2. Frontend Setup
 
-Assurez-vous d'avoir Node.js (v18+) installé.
+Ensure you have **Node.js (v18+)** installed.
 
 ```bash
-# Dans un nouveau terminal, se rendre dans le dossier frontend
+# Navigate to the frontend directory
 cd frontend
 
-# Installer les packages NPM
+# Install Node modules
 npm install
 
-# Démarrer le serveur de développement Vite
+# Start the Vite development server
 npm run dev
 ```
 
-L'application front sera disponible sur `http://localhost:5173`. L'API (`http://localhost:8000/api/v1`) est déjà configurée par défaut dans `frontend/src/services/apiClient.js`.
+The frontend application will be served at `http://localhost:5173`. The API endpoints are pre-configured to target `http://localhost:8000/api/v1` in `frontend/src/services/apiClient.js`.
 
----
+## API Integration & Authentication
 
-## 🔌 Fonctionnement de l'Authentification et des API
+1. **API Client**: All outbound HTTP requests to the Django backend are routed through a configured Axios instance (`apiClient.js`).
+2. **JWT Interceptors**: `Authorization: Bearer <token>` headers are injected automatically. Upon encountering a `401 Unauthorized` response due to token expiration, the Axios interceptor attempts to refresh the session token transparently (`/auth/refresh/`) before retrying the original request.
+3. **State Synchronization**: `React Query` acts as the primary data fetching and caching layer to ensure UI synchronization with the backend state.
 
-1. **Client API (`apiClient.js`)** : Toutes les requêtes sortantes vers Django utilisent l'instance `axios` configurée dans `apiClient.js`.
-2. **Intercepteurs JWT** : Le header `Authorization: Bearer <token>` est automatiquement injecté par Axios. Si l'API retourne une erreur `401 Unauthorized` liée à un token expiré, l'intercepteur tente de rafraîchir le token (`/auth/refresh/`) automatiquement avant de réessayer la requête.
-3. **React Query** : Est utilisé massivement pour récupérer, cacher et invalider les données provenant de l'API (cf. `frontend/src/hooks/`).
+## Contribution Guidelines
 
----
-
-## 🤝 Bonnes pratiques de contribution
-
-- **Backend** : Suivez les standards PEP-8 (vous pouvez utiliser `black` et `isort`). Pensez à faire un `python manage.py makemigrations` chaque fois que vous modifiez le dictionnaire d'un modèle (fichier `models.py`).
-- **Frontend** :
-  - Privilégiez l'utilisation de React Query pour tout nouvel appel `GET`.
-  - Isoler la logique de fetch dans les fichiers `services/*.service.js`.
-  - Maintenir les imports propres et gérés.
-
-Merci de participer à l'amélioration de Ness Food ! 🍲
+* **Backend**: Adhere to PEP-8 coding standards (`black` and `isort` are recommended). Ensure database migrations are generated and committed whenever `models.py` definitions are mutated.
+* **Frontend**:
+  * Utilize React Query for stateful cross-component `GET` requests.
+  * Isolate fetch operations within domain-specific service files (`services/*.service.js`).
+  * Maintain strict component separation of concerns.
