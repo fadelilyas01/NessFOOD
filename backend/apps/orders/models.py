@@ -5,8 +5,46 @@ Order models for Ness Food E-commerce.
 import uuid
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 from apps.products.models import Product
 from apps.core.models import TimeStampedModel
+
+class Coupon(TimeStampedModel):
+    """
+    Discount coupon code.
+    """
+    code = models.CharField(max_length=50, unique=True)
+    valid_from = models.DateTimeField()
+    valid_to = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+    
+    # either percentage or fixed amount
+    is_percentage = models.BooleanField(default=True)
+    discount_value = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    
+    # max applications per coupon and user
+    max_uses = models.PositiveIntegerField(null=True, blank=True)
+    used_count = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        verbose_name = 'Code Promo'
+        verbose_name_plural = 'Codes Promos'
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return self.code
+        
+    @property
+    def is_valid(self):
+        now = timezone.now()
+        if not self.is_active:
+            return False
+        if self.valid_from > now or self.valid_to < now:
+            return False
+        if self.max_uses and self.used_count >= self.max_uses:
+            return False
+        return True
 
 
 class Order(models.Model):
@@ -57,6 +95,10 @@ class Order(models.Model):
     stripe_payment_intent_id = models.CharField(max_length=255, blank=True)
     stripe_checkout_session_id = models.CharField(max_length=255, blank=True)
     paid_at = models.DateTimeField(null=True, blank=True)
+    
+    # Discounts
+    coupon = models.ForeignKey(Coupon, related_name='orders', null=True, blank=True, on_delete=models.SET_NULL)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     # Notes
     customer_notes = models.TextField(blank=True)

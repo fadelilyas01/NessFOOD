@@ -3,13 +3,20 @@ Admin configuration for Orders app.
 """
 
 from django.contrib import admin
-from .models import Order, OrderItem
+from .models import Order, OrderItem, Coupon
 
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
     readonly_fields = ['product_name', 'product_price', 'product_weight', 'subtotal']
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ['code', 'discount_value', 'is_percentage', 'is_active', 'valid_from', 'valid_to', 'used_count']
+    list_filter = ['is_active', 'is_percentage']
+    search_fields = ['code']
+    readonly_fields = ['used_count']
 
 
 @admin.register(Order)

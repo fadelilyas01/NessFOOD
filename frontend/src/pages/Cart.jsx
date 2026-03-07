@@ -1,9 +1,15 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/useCart';
+import { toast } from 'react-hot-toast';
+import axios from 'axios';
 import './Cart.css';
 
 export default function Cart() {
     const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();
+    const [couponCode, setCouponCode] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
     if (cartItems.length === 0) {
         return (
@@ -19,6 +25,46 @@ export default function Cart() {
             </main>
         );
     }
+
+    const handleApplyCoupon = async () => {
+        if (!couponCode) return;
+        setIsApplyingCoupon(true);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.post('http://localhost:8000/api/orders/validate-coupon/',
+                { code: couponCode },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setAppliedCoupon(res.data.coupon);
+            toast.success(res.data.message);
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Code invalide.');
+            setAppliedCoupon(null);
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode('');
+        toast.info('Code promo retiré');
+    };
+
+    let discountAmount = 0;
+    if (appliedCoupon) {
+        if (appliedCoupon.is_percentage) {
+            discountAmount = (cartTotal * appliedCoupon.discount_value) / 100;
+        } else {
+            discountAmount = appliedCoupon.discount_value;
+        }
+        discountAmount = Math.min(discountAmount, cartTotal);
+    }
+
+    const subtotalAfterDiscount = Math.max(0, cartTotal - discountAmount);
+    const shippingCost = subtotalAfterDiscount >= 50 ? 0 : 5.90;
+    const taxes = (subtotalAfterDiscount + shippingCost) * 0.14975;
+    const finalTotal = subtotalAfterDiscount + shippingCost + taxes;
 
     return (
         <main className="cart-page">
@@ -92,30 +138,71 @@ export default function Cart() {
                             <span>Sous-total</span>
                             <span>{cartTotal.toFixed(2)} $CAD</span>
                         </div>
+
+                        {/* Coupon Section */}
+                        <div className="cart-coupon-section" style={{ margin: '1rem 0', padding: '1rem 0', borderTop: '1px solid var(--color-gray-light)', borderBottom: '1px solid var(--color-gray-light)' }}>
+                            {appliedCoupon ? (
+                                <div className="applied-coupon" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--color-green-light)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span style={{ fontWeight: 'bold', color: 'var(--color-green)' }}>Code: {appliedCoupon.code}</span>
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--color-green)' }}>
+                                            -{appliedCoupon.is_percentage ? `${appliedCoupon.discount_value}%` : `${appliedCoupon.discount_value}$`}
+                                        </span>
+                                    </div>
+                                    <button onClick={removeCoupon} style={{ background: 'none', border: 'none', color: 'var(--color-gray)', cursor: 'pointer' }}>✕</button>
+                                </div>
+                            ) : (
+                                <div className="coupon-input-group" style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Code promo"
+                                        value={couponCode}
+                                        onChange={(e) => setCouponCode(e.target.value)}
+                                        style={{ flex: 1, padding: '0.5rem', border: '1px solid var(--color-gray-light)', borderRadius: 'var(--radius-sm)' }}
+                                    />
+                                    <button
+                                        className="btn btn-secondary"
+                                        onClick={handleApplyCoupon}
+                                        disabled={!couponCode || isApplyingCoupon}
+                                        style={{ padding: '0.5rem 1rem' }}
+                                    >
+                                        {isApplyingCoupon ? '...' : 'Appliquer'}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {discountAmount > 0 && (
+                            <div className="summary-row" style={{ color: 'var(--color-green)' }}>
+                                <span>Remise</span>
+                                <span>-{discountAmount.toFixed(2)} $CAD</span>
+                            </div>
+                        )}
+
                         <div className="summary-row">
                             <span>Livraison</span>
-                            <span>{cartTotal >= 50 ? 'Gratuite' : '5.90 $CAD'}</span>
+                            <span>{shippingCost === 0 ? 'Gratuite' : '5.90 $CAD'}</span>
                         </div>
 
                         {/* Tax Calculations */}
                         <div className="summary-row tax-row">
                             <span>TPS (5%)</span>
-                            <span>{(cartTotal * 0.05).toFixed(2)} $CAD</span>
+                            <span>{(subtotalAfterDiscount * 0.05).toFixed(2)} $CAD</span>
                         </div>
                         <div className="summary-row tax-row">
                             <span>TVQ (9.975%)</span>
-                            <span>{(cartTotal * 0.09975).toFixed(2)} $CAD</span>
+                            <span>{(subtotalAfterDiscount * 0.09975).toFixed(2)} $CAD</span>
                         </div>
 
-                        {cartTotal < 50 ? (
+                        {subtotalAfterDiscount < 50 ? (
                             <div className="shipping-progress">
                                 <div className="progress-text">
-                                    Plus que <strong>{(50 - cartTotal).toFixed(2)} $</strong> pour la livraison gratuite !
+                                    Plus que <strong>{(50 - subtotalAfterDiscount).toFixed(2)} $</strong> pour la livraison gratuite !
                                 </div>
-                                <div className="progress-track">
+                                <div className="progress-track" style={{ marginTop: '0.5rem' }}>
                                     <div
                                         className="progress-fill"
-                                        style={{ width: `${Math.min((cartTotal / 50) * 100, 100)}%` }}
+                                        style={{ width: `${Math.min((subtotalAfterDiscount / 50) * 100, 100)}%` }}
                                     ></div>
                                 </div>
                             </div>
@@ -126,12 +213,10 @@ export default function Cart() {
                         )}
                         <div className="summary-total">
                             <span>Total (TTC)</span>
-                            <span>{(
-                                cartTotal * 1.14975 + (cartTotal >= 50 ? 0 : 5.90)
-                            ).toFixed(2)} $CAD</span>
+                            <span>{finalTotal.toFixed(2)} $CAD</span>
                         </div>
 
-                        <Link to="/paiement" className="btn btn-primary btn-lg full-width">
+                        <Link to="/paiement" state={{ appliedCoupon }} className="btn btn-primary btn-lg full-width">
                             Passer la commande
                         </Link>
 

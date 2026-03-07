@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
+import SkeletonLoader from '../components/SkeletonLoader';
 import { useProductsQuery } from '../hooks/useProductsQuery';
 import './Home.css';
 
@@ -54,8 +55,25 @@ export default function Home() {
     if (isLoading) {
         return (
             <main className="home">
-                <section className="hero-slider" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div className="spinner"></div>
+                <section className="hero-slider" style={{ backgroundColor: 'var(--color-beige)' }}>
+                    <div className="container" style={{ display: 'flex', height: '100%', alignItems: 'center', padding: '5%' }}>
+                        <div style={{ width: '50%' }}>
+                            <div style={{ width: '80px', marginBottom: '1rem' }}><SkeletonLoader type="badge" count={1} /></div>
+                            <SkeletonLoader type="title" count={1} />
+                            <div style={{ marginTop: '1rem', marginBottom: '2rem' }}><SkeletonLoader type="text" count={3} /></div>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <div style={{ width: '180px' }}><SkeletonLoader type="btn" count={1} /></div>
+                                <div style={{ width: '180px' }}><SkeletonLoader type="btn" count={1} /></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="featured section bg-white">
+                    <div className="container">
+                        <div className="products-grid">
+                            <SkeletonLoader type="card" count={4} />
+                        </div>
+                    </div>
                 </section>
             </main>
         );

@@ -66,6 +66,7 @@ class CreateOrderSerializer(serializers.Serializer):
     shipping_postal_code = serializers.CharField(max_length=20)
     shipping_country = serializers.CharField(max_length=100, default='France')
     customer_notes = serializers.CharField(required=False, allow_blank=True)
+    coupon_code = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
 
 class UpdateOrderStatusSerializer(serializers.Serializer):

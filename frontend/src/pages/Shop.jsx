@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ProductCard from '../components/ProductCard';
+import SkeletonLoader from '../components/SkeletonLoader';
 import { useProductsQuery, useCategoriesQuery } from '../hooks/useProductsQuery';
 import './Shop.css';
 
@@ -35,8 +36,22 @@ export default function Shop() {
 
     if (isProductsLoading) {
         return (
-            <main className="shop-page" style={{ minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <div className="spinner"></div>
+            <main className="shop-page">
+                <section className="shop-hero" style={{ backgroundColor: 'var(--color-beige-dark)' }}>
+                    <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div style={{ width: '40%' }}><SkeletonLoader type="title" count={1} /></div>
+                        <div style={{ marginTop: '1rem', width: '60%' }}>
+                            <SkeletonLoader type="text" count={1} />
+                        </div>
+                    </div>
+                </section>
+                <section className="shop-content section">
+                    <div className="container">
+                        <div className="shop-products-grid">
+                            <SkeletonLoader type="card" count={6} />
+                        </div>
+                    </div>
+                </section>
             </main>
         );
     }

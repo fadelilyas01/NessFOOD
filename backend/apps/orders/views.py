@@ -13,6 +13,8 @@ from .serializers import (
     UpdateOrderStatusSerializer,
 )
 from apps.cart.models import Cart
+from .models import Coupon
+from django.utils import timezone
 
 
 class OrderListView(generics.ListAPIView):
@@ -65,12 +67,39 @@ class CreateOrderView(APIView):
                 'error': 'Votre panier est vide.'
             }, status=status.HTTP_400_BAD_REQUEST)
         
+        
+        # Apply Coupon
+        coupon = None
+        discount_amount = 0
+        coupon_code = serializer.validated_data.pop('coupon_code', None)
+        
+        if coupon_code:
+            try:
+                coupon = Coupon.objects.get(code__iexact=coupon_code)
+                if coupon.is_valid:
+                    if coupon.is_percentage:
+                        discount_amount = (cart.total * coupon.discount_value) / 100
+                    else:
+                        discount_amount = coupon.discount_value
+                    # Ensure discount doesn't exceed subtotal
+                    discount_amount = min(discount_amount, cart.total)
+                    
+                    # increment usage
+                    coupon.used_count += 1
+                    coupon.save()
+            except Coupon.DoesNotExist:
+                pass
+        
+        final_total = max(0, cart.total - discount_amount) + cart.shipping_cost
+
         # Create order
         order = Order.objects.create(
             user=request.user,
             subtotal=cart.total,
             shipping_cost=cart.shipping_cost,
-            total=cart.grand_total,
+            discount_amount=discount_amount,
+            total=final_total,
+            coupon=coupon,
             **serializer.validated_data
         )
         
@@ -135,4 +164,32 @@ class AdminUpdateOrderView(APIView):
         return Response({
             'message': 'Statut de la commande mis à jour.',
             'order': OrderDetailSerializer(order).data
+        })
+
+class ValidateCouponView(APIView):
+    """
+    Validate a coupon code and return its discount info.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        code = request.data.get('code', None)
+        if not code:
+            return Response({'error': 'Code promo manquant.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            coupon = Coupon.objects.get(code__iexact=code)
+        except Coupon.DoesNotExist:
+            return Response({'error': 'Code promo invalide.'}, status=status.HTTP_404_NOT_FOUND)
+            
+        if not coupon.is_valid:
+            return Response({'error': 'Ce code promo a expiré ou nest plus valide.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response({
+            'message': 'Code promo valide.',
+            'coupon': {
+                'code': coupon.code,
+                'is_percentage': coupon.is_percentage,
+                'discount_value': float(coupon.discount_value)
+            }
         })

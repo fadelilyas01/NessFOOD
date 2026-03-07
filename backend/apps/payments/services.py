@@ -9,8 +9,9 @@ import logging
 from decimal import Decimal
 from django.conf import settings
 from django.utils import timezone
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from .utils import generate_invoice_pdf
 
 # Initialize Stripe with API key
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -432,16 +433,20 @@ L'équipe Ness Food
 Ceci est un email automatique, merci de ne pas y répondre.
 Contact : contact@nessfood.com
 """
-            
-            send_mail(
+
+            # Generate PDF invoice
+            pdf_invoice = generate_invoice_pdf(order)
+
+            msg = EmailMessage(
                 subject=subject,
-                message=message,
+                body=message,
                 from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[order.shipping_email],
-                fail_silently=True,
+                to=[order.shipping_email]
             )
+            msg.attach(f'Facture_NessFood_{order.order_number}.pdf', pdf_invoice, 'application/pdf')
+            msg.send(fail_silently=True)
             
-            logger.info(f"Confirmation email sent for order {order.order_number}")
+            logger.info(f"Confirmation email with PDF sent for order {order.order_number}")
             
         except Exception as e:
             logger.error(f"Failed to send confirmation email: {e}")

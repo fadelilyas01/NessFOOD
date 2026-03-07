@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getPaymentSuccess } from '../services/paymentService';
+import { useCart } from '../context/useCart';
 import './PaymentResult.css';
 
 export default function PaymentSuccess() {
     const [searchParams] = useSearchParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { clearCart } = useCart();
 
     useEffect(() => {
         const loadOrder = async () => {
@@ -18,6 +20,7 @@ export default function PaymentSuccess() {
                     const data = await getPaymentSuccess(orderNumber, sessionId);
                     if (data.order) {
                         setOrder(data.order);
+                        clearCart();
                     }
                 } catch (error) {
                     console.error('Failed to load order:', error);
@@ -27,7 +30,7 @@ export default function PaymentSuccess() {
         };
 
         loadOrder();
-    }, [searchParams]);
+    }, [searchParams, clearCart]);
 
     if (loading) {
         return (

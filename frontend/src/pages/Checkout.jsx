@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/useCart';
+import { toast } from 'react-hot-toast';
+import axios from 'axios';
 import './Checkout.css';
 
 export default function Checkout() {
-    const { cartItems, cartTotal, clearCart } = useCart();
+    const { cartItems, cartTotal } = useCart();
+    const location = useLocation();
+    const appliedCoupon = location.state?.appliedCoupon || null;
+
     const [step, setStep] = useState(1);
-    const [orderComplete, setOrderComplete] = useState(false);
-    const [orderId, setOrderId] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         firstName: '',
@@ -19,11 +23,21 @@ export default function Checkout() {
         paymentMethod: 'card'
     });
 
-    const shippingCost = cartTotal >= 50 ? 0 : 5.90;
-    const taxes = (cartTotal + shippingCost) * 0.14975;
-    const totalWithTaxes = cartTotal + shippingCost + taxes;
+    let discountAmount = 0;
+    if (appliedCoupon) {
+        if (appliedCoupon.is_percentage) {
+            discountAmount = (cartTotal * appliedCoupon.discount_value) / 100;
+        } else {
+            discountAmount = appliedCoupon.discount_value;
+        }
+        discountAmount = Math.min(discountAmount, cartTotal);
+    }
+    const subtotalAfterDiscount = Math.max(0, cartTotal - discountAmount);
+    const shippingCost = subtotalAfterDiscount >= 50 ? 0 : 5.90;
+    const taxes = (subtotalAfterDiscount + shippingCost) * 0.14975;
+    const totalWithTaxes = subtotalAfterDiscount + shippingCost + taxes;
 
-    if (cartItems.length === 0 && !orderComplete) {
+    if (cartItems.length === 0) {
         return (
             <main className="checkout-empty">
                 <div className="container text-center">
@@ -44,39 +58,63 @@ export default function Checkout() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (step === 1) {
             setStep(2);
         } else {
-            // Simulation du traitement de la commande
-            setOrderId(Date.now().toString().slice(-8));
-            setOrderComplete(true);
-            clearCart();
+            if (formData.paymentMethod !== 'card') {
+                toast.error('Seuls les paiements par carte sont supportés pour le moment.');
+                return;
+            }
+            setIsProcessing(true);
+            try {
+                const token = localStorage.getItem('token');
+
+                // 1. Create order
+                const orderData = {
+                    shipping_name: `${formData.firstName} ${formData.lastName}`,
+                    shipping_email: formData.email,
+                    shipping_phone: formData.phone,
+                    shipping_address: formData.address,
+                    shipping_city: formData.city,
+                    shipping_postal_code: formData.postalCode,
+                    shipping_country: 'Canada',
+                    coupon_code: appliedCoupon?.code || null,
+                };
+
+                const orderRes = await axios.post('http://localhost:8000/api/orders/create/', orderData, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const orderNumber = orderRes.data.order.order_number;
+
+                // 2. Init Stripe Checkout
+                const checkoutRes = await axios.post('http://localhost:8000/api/payments/checkout/',
+                    { order_number: orderNumber },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                // 3. Redirect to Stripe
+                if (checkoutRes.data.checkout_url) {
+                    window.location.href = checkoutRes.data.checkout_url;
+                } else {
+                    toast.error('Erreur lors de l\'initialisation du paiement');
+                    setIsProcessing(false);
+                }
+            } catch (err) {
+                console.error(err);
+                if (err.response?.status === 401) {
+                    toast.error("Veuillez vous connecter pour procéder au paiement.");
+                } else {
+                    toast.error(err.response?.data?.error || 'Une erreur est survenue lors de la validation de la commande.');
+                }
+                setIsProcessing(false);
+            }
         }
     };
 
-    if (orderComplete) {
-        return (
-            <main className="checkout-success">
-                <div className="container text-center">
-                    <div className="success-icon">✓</div>
-                    <h1>Commande confirmée !</h1>
-                    <p className="success-message">
-                        Merci pour votre commande ! Vous recevrez un email de confirmation
-                        à l'adresse <strong>{formData.email}</strong>.
-                    </p>
-                    <div className="success-details">
-                        <p>Numéro de commande: <strong>#NF{orderId}</strong></p>
-                        <p>Livraison estimée: <strong>2-3 jours ouvrés</strong></p>
-                    </div>
-                    <Link to="/" className="btn btn-primary btn-lg">
-                        Retour à l'accueil
-                    </Link>
-                </div>
-            </main>
-        );
-    }
+    // Removed local orderComplete render because it's handled by PaymentSuccess.jsx
 
     return (
         <main className="checkout-page">
@@ -238,45 +276,19 @@ export default function Checkout() {
                                 </div>
 
                                 {formData.paymentMethod === 'card' && (
-                                    <div className="card-form">
-                                        <div className="form-group">
-                                            <label className="form-label">Numéro de carte</label>
-                                            <input
-                                                type="text"
-                                                className="form-input"
-                                                placeholder="1234 5678 9012 3456"
-                                                maxLength="19"
-                                            />
-                                        </div>
-                                        <div className="form-row">
-                                            <div className="form-group">
-                                                <label className="form-label">Date d'expiration</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-input"
-                                                    placeholder="MM/AA"
-                                                    maxLength="5"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">CVV</label>
-                                                <input
-                                                    type="text"
-                                                    className="form-input"
-                                                    placeholder="123"
-                                                    maxLength="3"
-                                                />
-                                            </div>
-                                        </div>
+                                    <div className="card-form-notification" style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'var(--color-gray-light)', borderRadius: 'var(--radius-sm)' }}>
+                                        <p style={{ margin: 0, color: 'var(--color-gray-dark)' }}>
+                                            ℹ️ Vous allez être redirigé vers <strong>Stripe</strong> pour un paiement sécurisé. (Les paiements via Apple Pay et Google Pay sont également supportés).
+                                        </p>
                                     </div>
                                 )}
 
                                 <div className="form-buttons">
-                                    <button type="button" className="btn btn-secondary" onClick={() => setStep(1)}>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setStep(1)} disabled={isProcessing}>
                                         ← Retour
                                     </button>
-                                    <button type="submit" className="btn btn-green btn-lg">
-                                        Payer {totalWithTaxes.toFixed(2)} $CAD
+                                    <button type="submit" className="btn btn-green btn-lg" disabled={isProcessing}>
+                                        {isProcessing ? 'Redirection...' : `Payer ${totalWithTaxes.toFixed(2)} $CAD`}
                                     </button>
                                 </div>
                             </div>
@@ -310,6 +322,12 @@ export default function Checkout() {
                                 <span>Sous-total</span>
                                 <span>{cartTotal.toFixed(2)} $CAD</span>
                             </div>
+                            {discountAmount > 0 && (
+                                <div className="order-row" style={{ color: 'var(--color-green)' }}>
+                                    <span>Remise</span>
+                                    <span>-{discountAmount.toFixed(2)} $CAD</span>
+                                </div>
+                            )}
                             <div className="order-row">
                                 <span>Livraison</span>
                                 <span>{shippingCost === 0 ? 'Gratuite' : `${shippingCost.toFixed(2)} $CAD`}</span>

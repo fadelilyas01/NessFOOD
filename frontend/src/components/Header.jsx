@@ -3,10 +3,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/useCart';
 import { useAuth } from '../context/useAuth';
+import { useWishlist } from '../context/WishlistContext';
+import ThemeToggle from './ThemeToggle';
+import SearchBar from './SearchBar';
 import './Header.css';
 
 export default function Header() {
     const { cartCount } = useCart();
+    const { wishlist } = useWishlist();
     const { user, isAuthenticated, logout } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -22,10 +26,9 @@ export default function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close menus on route change
     useEffect(() => {
-        setMenuOpen(false);
-        setUserMenuOpen(false);
+        if (menuOpen) setMenuOpen(false);
+        if (userMenuOpen) setUserMenuOpen(false);
     }, [location]);
 
     const handleLogout = async () => {
@@ -60,8 +63,12 @@ export default function Header() {
                     <Link to="/contact" className="nav-link">Contact</Link>
                 </nav>
 
+                <SearchBar />
+
                 {/* Actions */}
                 <div className="header-actions">
+                    <ThemeToggle />
+
                     {/* User Menu */}
                     {isAuthenticated ? (
                         <div className="user-menu-wrapper">
@@ -109,6 +116,33 @@ export default function Header() {
                             </motion.button>
                         </Link>
                     )}
+
+                    {/* Wishlist */}
+                    <Link to="/favoris" className="cart-btn-wrapper">
+                        <motion.div
+                            className="cart-btn"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            style={{ padding: '0 5px' }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <AnimatePresence>
+                                {wishlist.length > 0 && (
+                                    <motion.span
+                                        className="cart-badge"
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0 }}
+                                        key={wishlist.length}
+                                    >
+                                        {wishlist.length}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    </Link>
 
                     {/* Cart */}
                     <Link to="/panier" className="cart-btn-wrapper">

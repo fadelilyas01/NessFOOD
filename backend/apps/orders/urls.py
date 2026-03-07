@@ -9,11 +9,13 @@ from .views import (
     CreateOrderView,
     AdminOrderListView,
     AdminUpdateOrderView,
+    ValidateCouponView,
 )
 
 urlpatterns = [
     path('', OrderListView.as_view(), name='order_list'),
     path('create/', CreateOrderView.as_view(), name='create_order'),
+    path('validate-coupon/', ValidateCouponView.as_view(), name='validate_coupon'),
     path('<str:order_number>/', OrderDetailView.as_view(), name='order_detail'),
     
     # Admin routes
