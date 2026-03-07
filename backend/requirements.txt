@@ -1,0 +1,16 @@
+# Ness Food Backend - Django E-commerce API
+
+Django==5.0.1
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+django-filter==23.5
+drf-spectacular==0.27.0
+python-dotenv==1.0.0
+Pillow==10.2.0
+stripe==7.10.0
+psycopg2-binary==2.9.9
+gunicorn==21.2.0
+whitenoise==6.6.0
+dj-database-url==2.1.0
+django-jazzmin==2.6.0

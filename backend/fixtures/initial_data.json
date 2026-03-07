@@ -1,0 +1,155 @@
+[
+    {
+        "model": "products.category",
+        "pk": 1,
+        "fields": {
+            "name": "Plats principaux",
+            "slug": "plats-principaux",
+            "description": "Nos plats traditionnels prêts à consommer",
+            "is_active": true
+        }
+    },
+    {
+        "model": "products.category",
+        "pk": 2,
+        "fields": {
+            "name": "Packs",
+            "slug": "packs",
+            "description": "Nos packs économiques pour toute la famille",
+            "is_active": true
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 1,
+        "fields": {
+            "name": "Plakalidrom Original",
+            "slug": "plakalidrom-original",
+            "description": "Découvrez le goût authentique de la Côte d'Ivoire avec notre Plakalidrom Original. Préparé selon une recette traditionnelle transmise de génération en génération, notre plakali est fait à partir de manioc fraîchement sélectionné et transformé avec soin.",
+            "short_description": "Le plakali ivoirien authentique, prêt à déguster en quelques minutes.",
+            "price": "8.99",
+            "original_price": null,
+            "weight": "500g",
+            "stock": 100,
+            "category": 1,
+            "badges": [
+                "100% Naturel",
+                "Sans conservateurs"
+            ],
+            "instructions": "Au micro-ondes: 3-4 minutes à puissance moyenne. À la poêle: 5 minutes à feu doux avec un peu d'eau.",
+            "nutrition_info": {
+                "calories": "180 kcal",
+                "proteines": "2g",
+                "glucides": "42g",
+                "lipides": "0.5g",
+                "fibres": "3g"
+            },
+            "is_active": true,
+            "is_featured": true
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 2,
+        "fields": {
+            "name": "Plakalidrom Épicé",
+            "slug": "plakalidrom-epice",
+            "description": "Pour les amateurs de saveurs relevées, découvrez notre Plakalidrom Épicé ! La même qualité exceptionnelle que l'Original, avec une touche subtile de piment africain.",
+            "short_description": "Une touche de piment pour les amateurs de sensations fortes.",
+            "price": "9.49",
+            "original_price": null,
+            "weight": "500g",
+            "stock": 75,
+            "category": 1,
+            "badges": [
+                "Épicé",
+                "100% Naturel"
+            ],
+            "instructions": "Au micro-ondes: 3-4 minutes. À la poêle: 5 minutes à feu doux.",
+            "nutrition_info": {
+                "calories": "185 kcal",
+                "proteines": "2g",
+                "glucides": "42g",
+                "lipides": "0.5g",
+                "fibres": "3g"
+            },
+            "is_active": true,
+            "is_featured": true
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 3,
+        "fields": {
+            "name": "Pack Découverte",
+            "slug": "pack-decouverte",
+            "description": "Vous ne savez pas par où commencer ? Notre Pack Découverte contient 3 variétés pour découvrir tous les goûts du Plakalidrom. Économie de 15% par rapport à l'achat séparé !",
+            "short_description": "3 variétés pour découvrir tous les goûts du Plakalidrom.",
+            "price": "24.99",
+            "original_price": "29.99",
+            "weight": "3 x 500g",
+            "stock": 50,
+            "category": 2,
+            "badges": [
+                "Économie 15%",
+                "Best-seller"
+            ],
+            "instructions": "Consultez les fiches individuelles pour les instructions de chaque produit.",
+            "nutrition_info": null,
+            "is_active": true,
+            "is_featured": true
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 4,
+        "fields": {
+            "name": "Plakalidrom aux Herbes",
+            "slug": "plakalidrom-herbes",
+            "description": "Une touche de fraîcheur avec notre Plakalidrom aux Herbes ! Parfumé avec un mélange d'herbes fraîches traditionnelles africaines.",
+            "short_description": "Parfumé aux herbes fraîches de Côte d'Ivoire.",
+            "price": "9.29",
+            "original_price": null,
+            "weight": "500g",
+            "stock": 60,
+            "category": 1,
+            "badges": [
+                "Aux herbes",
+                "100% Naturel"
+            ],
+            "instructions": "Au micro-ondes: 3-4 minutes. Évitez de trop chauffer pour préserver les arômes.",
+            "nutrition_info": {
+                "calories": "175 kcal",
+                "proteines": "2g",
+                "glucides": "40g",
+                "lipides": "0.5g",
+                "fibres": "3.5g"
+            },
+            "is_active": true,
+            "is_featured": false
+        }
+    },
+    {
+        "model": "products.product",
+        "pk": 5,
+        "fields": {
+            "name": "Pack Familial",
+            "slug": "pack-familial",
+            "description": "Le Pack Familial est parfait pour les repas en famille ou les grandes occasions ! Contient 6 x Plakalidrom Original. Économie de 20%.",
+            "short_description": "6 portions pour régaler toute la famille.",
+            "price": "42.99",
+            "original_price": "53.94",
+            "weight": "6 x 500g",
+            "stock": 30,
+            "category": 2,
+            "badges": [
+                "Économie 20%",
+                "Familial"
+            ],
+            "instructions": "Voir instructions du Plakalidrom Original.",
+            "nutrition_info": null,
+            "is_active": true,
+            "is_featured": false
+        }
+    }
+]

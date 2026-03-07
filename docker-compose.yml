@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Database
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=nessfood
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - nessfood-network
+
+  # Backend (Django)
+  backend:
+    build:
+      context: ./backend
+    command: /entrypoint.sh
+    volumes:
+      - ./backend:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    expose:
+      - 8000
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/nessfood
+      - EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+    depends_on:
+      - db
+    networks:
+      - nessfood-network
+
+  # Frontend (React + Nginx)
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend/src:/app/src # For dev hot reload if using dev server, but this is prod build
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - nessfood-network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+
+networks:
+  nessfood-network:
+    driver: bridge
