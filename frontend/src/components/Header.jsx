@@ -27,9 +27,11 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        if (menuOpen) setMenuOpen(false);
-        if (userMenuOpen) setUserMenuOpen(false);
-    }, [location]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setMenuOpen(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        setUserMenuOpen(false);
+    }, [location.pathname]);
 
     const handleLogout = async () => {
         await logout();

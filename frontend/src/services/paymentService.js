@@ -35,7 +35,7 @@ export async function checkPaymentStatus(orderNumber) {
     try {
         const response = await apiClient.get(`/payments/status/${orderNumber}/`);
         return response.data;
-    } catch (error) {
+    } catch {
         throw new Error('Erreur lors de la vérification du paiement');
     }
 }
@@ -62,7 +62,7 @@ export async function getPaymentHistory() {
     try {
         const response = await apiClient.get('/payments/history/');
         return response.data;
-    } catch (error) {
+    } catch {
         throw new Error('Erreur lors de la récupération de l\'historique');
     }
 }

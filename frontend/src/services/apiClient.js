@@ -54,21 +54,17 @@ apiClient.interceptors.response.use(
 // We keep apiRequest for backward compatibility just in case, but prefer direct apiClient usage
 export async function apiRequest(endpoint, options = {}) {
     const { method = 'GET', body, ...restOptions } = options;
-    try {
-        const response = await apiClient({
-            url: endpoint,
-            method,
-            data: body ? JSON.parse(body) : undefined,
-            ...restOptions,
-        });
-        return {
-            ok: response.status >= 200 && response.status < 300,
-            json: async () => response.data,
-            ...response,
-        };
-    } catch (error) {
-        throw error;
-    }
+    const response = await apiClient({
+        url: endpoint,
+        method,
+        data: body ? JSON.parse(body) : undefined,
+        ...restOptions,
+    });
+    return {
+        ok: response.status >= 200 && response.status < 300,
+        json: async () => response.data,
+        ...response,
+    };
 }
 
 export async function refreshToken() {

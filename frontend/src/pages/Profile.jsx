@@ -7,7 +7,7 @@ import './Profile.css';
 export default function Profile() {
     const { user, logout } = useAuth();
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('info'); // info, orders, addresses
     const [addresses, setAddresses] = useState([]);
 

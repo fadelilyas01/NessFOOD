@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useWishlist } from '../context/WishlistContext';
 import ProductCard from '../components/ProductCard';
 
