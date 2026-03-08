@@ -3,7 +3,7 @@ Admin configuration for Products app.
 """
 
 from django.contrib import admin
-from .models import Category, Product, ProductImage
+from .models import Category, Product, ProductImage, Tag
 
 
 class ProductImageInline(admin.TabularInline):
@@ -25,15 +25,23 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'color']
+    search_fields = ['name']
+    prepopulated_fields = {'slug': ('name',)}
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """
     Product admin.
     """
-    list_display = ['name', 'price', 'stock', 'category', 'is_active', 'is_featured']
-    list_filter = ['category', 'is_active', 'is_featured', 'created_at']
-    search_fields = ['name', 'description']
+    list_display = ['name', 'price', 'stock', 'category', 'is_active', 'is_featured', 'is_hero_slider']
+    list_filter = ['category', 'is_active', 'is_featured', 'is_hero_slider', 'created_at']
+    search_fields = ['name', 'description', 'short_description']
     prepopulated_fields = {'slug': ('name',)}
+    filter_horizontal = ['tags', 'related_products']
     inlines = [ProductImageInline]
     
     fieldsets = (
@@ -43,11 +51,14 @@ class ProductAdmin(admin.ModelAdmin):
         ('Prix et stock', {
             'fields': ('price', 'original_price', 'weight', 'stock')
         }),
-        ('Badges et informations', {
-            'fields': ('badges', 'instructions', 'nutrition_info')
+        ('Tags et suggéstions', {
+            'fields': ('tags', 'related_products')
         }),
-        ('Statut', {
-            'fields': ('is_active', 'is_featured')
+        ('Contenu additionnel', {
+            'fields': ('instructions', 'nutrition_info')
+        }),
+        ('Statut et visibilité', {
+            'fields': ('is_active', 'is_featured', 'is_hero_slider')
         }),
     )
 

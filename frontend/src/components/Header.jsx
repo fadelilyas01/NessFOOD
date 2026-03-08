@@ -6,6 +6,7 @@ import { useAuth } from '../context/useAuth';
 import { useWishlist } from '../context/WishlistContext';
 import ThemeToggle from './ThemeToggle';
 import SearchBar from './SearchBar';
+import logo from '../assets/images/logo.png';
 import './Header.css';
 
 export default function Header() {
@@ -48,13 +49,12 @@ export default function Header() {
             <div className="container header-container">
                 {/* Logo */}
                 <Link to="/" className="logo">
-                    <motion.span
-                        className="logo-icon"
-                        whileHover={{ rotate: 20 }}
-                    >
-                        🍲
-                    </motion.span>
-                    <span className="logo-text">Ness Food</span>
+                    <img
+                        src={logo}
+                        alt="Ness Food Logo"
+                        className="logo-img"
+                        style={{ height: '50px', width: 'auto' }}
+                    />
                 </Link>
 
                 {/* Navigation */}
