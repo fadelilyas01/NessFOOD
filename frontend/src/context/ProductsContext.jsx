@@ -1,11 +1,6 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import * as api from '../services/api';
-
-const ProductsContext = createContext();
-
-export function useProducts() {
-    return useContext(ProductsContext);
-}
+import { ProductsContext } from './useProducts';
 
 export function ProductsProvider({ children }) {
     const [products, setProducts] = useState([]);
@@ -70,7 +65,7 @@ export function ProductsProvider({ children }) {
         try {
             const data = await api.getProduct(id);
             return data;
-        } catch (err) {
+        } catch {
             setError('Produit non trouvé');
             return null;
         } finally {

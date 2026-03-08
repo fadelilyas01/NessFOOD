@@ -29,7 +29,7 @@ export function CartProvider({ children }) {
                 }
             }
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, loadCart]);
 
     // Sauvegarder dans localStorage si non authentifié
     useEffect(() => {

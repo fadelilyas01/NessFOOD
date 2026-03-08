@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import ProductCard from '../components/ProductCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { useProductsQuery } from '../hooks/useProductsQuery';
@@ -29,7 +29,7 @@ export default function Home() {
     const { data: heroData, isLoading: isHeroLoading } = useProductsQuery({ is_hero_slider: true });
 
     const isLoading = isFeaturedLoading || isHeroLoading;
-    const featuredProducts = featuredData?.results || [];
+    const featuredProducts = useMemo(() => featuredData?.results || [], [featuredData]);
 
     // Select specific products for the hero slider
     // If not found, fallback to first 3 featured products

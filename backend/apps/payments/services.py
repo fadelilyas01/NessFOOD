@@ -9,7 +9,7 @@ import logging
 from decimal import Decimal
 from django.conf import settings
 from django.utils import timezone
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, send_mail
 from django.template.loader import render_to_string
 from .utils import generate_invoice_pdf
 
@@ -355,6 +355,8 @@ class StripeService:
         Returns:
             Stripe Refund object or None
         """
+        from apps.orders.models import Order
+        
         if not order.stripe_payment_intent_id:
             logger.error(f"No payment intent for order {order.order_number}")
             return None

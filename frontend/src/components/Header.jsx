@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { useCart } from '../context/useCart';
 import { useAuth } from '../context/useAuth';
-import { useWishlist } from '../context/WishlistContext';
+import { useWishlist } from '../context/useWishlist';
 import ThemeToggle from './ThemeToggle';
 import SearchBar from './SearchBar';
 import logo from '../assets/images/logo.png';
@@ -28,9 +28,8 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMenuOpen(false);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         setUserMenuOpen(false);
     }, [location.pathname]);
 

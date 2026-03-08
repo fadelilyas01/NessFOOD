@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 
 export default function ThemeToggle() {
     const { theme, toggleTheme } = useContext(ThemeContext);

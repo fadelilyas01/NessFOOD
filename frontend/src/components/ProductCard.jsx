@@ -1,8 +1,6 @@
-
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useCart } from '../context/useCart';
-import { useWishlist } from '../context/WishlistContext';
+import { useWishlist } from '../context/useWishlist';
 import { toast } from 'react-hot-toast';
 import './ProductCard.css';
 

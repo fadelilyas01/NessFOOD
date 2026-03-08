@@ -22,6 +22,7 @@ export default function ProductDetail() {
     useEffect(() => {
         if (id) {
             window.scrollTo({ top: 0, behavior: 'instant' });
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setQuantity(1);
             setActiveImage(0);
         }
