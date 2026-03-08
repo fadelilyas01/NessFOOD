@@ -82,7 +82,12 @@ export default function Header() {
                                 <div className="user-avatar-placeholder">
                                     {user?.first_name?.charAt(0) || 'U'}
                                 </div>
-                                <span className="user-name">{user?.first_name}</span>
+                                <span className="user-name">
+                                    {user?.first_name}
+                                    {user?.loyalty_profile?.points > 0 && (
+                                        <span style={{ color: '#f39c12', marginLeft: '5px' }}>⭐ {user.loyalty_profile.points}</span>
+                                    )}
+                                </span>
                             </motion.button>
 
                             <AnimatePresence>
@@ -99,6 +104,7 @@ export default function Header() {
                                         </div>
                                         <Link to="/profil" className="dropdown-link">Mon profil</Link>
                                         <Link to="/commandes" className="dropdown-link">Mes commandes</Link>
+                                        <Link to="/fidelite" className="dropdown-link">⭐ Ma Fidélité</Link>
                                         <button onClick={handleLogout} className="dropdown-link logout-btn">
                                             Déconnexion
                                         </button>

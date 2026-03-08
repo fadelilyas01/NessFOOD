@@ -71,6 +71,15 @@ export function AuthProvider({ children }) {
         }
     }, []);
 
+    const refreshProfile = useCallback(async () => {
+        try {
+            const userData = await api.getProfile();
+            setUser(userData);
+        } catch (error) {
+            console.error('Failed to refresh profile', error);
+        }
+    }, []);
+
     const value = {
         user,
         isAuthenticated,
@@ -78,6 +87,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        refreshProfile,
     };
 
     return (

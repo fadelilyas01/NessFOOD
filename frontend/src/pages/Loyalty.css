@@ -1,0 +1,226 @@
+.loyalty-page {
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+
+.loyalty-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.loyalty-header h1 {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 10px;
+}
+
+.loyalty-header p {
+    color: var(--color-text-light);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.loyalty-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .loyalty-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.loyalty-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border);
+}
+
+.loyalty-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    color: var(--color-text);
+}
+
+/* Balance Card */
+.balance-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.points-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.points-number {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.points-label {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-left: 8px;
+    color: var(--color-primary);
+    /* Fallback */
+}
+
+.progress-container {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.progress-bar-bg {
+    height: 12px;
+    background-color: var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary));
+    border-radius: 10px;
+}
+
+.progress-text {
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+
+.redeem-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    margin-top: auto;
+}
+
+.redeem-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--color-border);
+    color: var(--color-text-light);
+}
+
+/* Success Coupon */
+.coupon-success {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: rgba(39, 174, 96, 0.1);
+    /* Light green */
+    border: 1px dashed var(--color-green);
+    border-radius: var(--radius-md);
+    width: 100%;
+}
+
+.coupon-success h3 {
+    color: var(--color-green);
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.coupon-code-box {
+    background-color: var(--color-bg);
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 15px;
+    border: 1px solid var(--color-border);
+}
+
+.coupon-code-box code {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--color-text);
+}
+
+.coupon-success p {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+/* Info Card */
+.loyalty-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+}
+
+.loyalty-steps li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.loyalty-steps li:last-child {
+    margin-bottom: 0;
+}
+
+.step-icon {
+    font-size: 2rem;
+    background-color: var(--color-bg);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 15px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .step-icon {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.loyalty-steps strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: 5px;
+}
+
+.loyalty-steps p {
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.loyalty-stats {
+    padding-top: 25px;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.loyalty-stats p {
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+.loyalty-stats strong {
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}

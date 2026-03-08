@@ -19,3 +19,8 @@ export async function addAddress(address) {
     const response = await apiClient.post('/users/addresses/', address);
     return response.data;
 }
+
+export async function redeemLoyaltyPoints() {
+    const response = await apiClient.post('/users/loyalty/redeem/');
+    return response.data;
+}

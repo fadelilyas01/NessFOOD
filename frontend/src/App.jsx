@@ -20,6 +20,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import OrderHistory from './pages/OrderHistory';
+import Loyalty from './pages/Loyalty';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
 import './index.css';
@@ -71,6 +72,7 @@ function App() {
                     <Route path="/inscription" element={<Register />} />
                     <Route path="/profil" element={<Profile />} />
                     <Route path="/commandes" element={<OrderHistory />} />
+                    <Route path="/fidelite" element={<Loyalty />} />
 
                     {/* Info Pages */}
                     <Route path="/faq" element={<FAQ />} />

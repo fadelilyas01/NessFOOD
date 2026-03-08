@@ -127,3 +127,54 @@ class ShippingAddressDetailView(generics.RetrieveUpdateDestroyAPIView):
     
     def get_queryset(self):
         return ShippingAddress.objects.filter(user=self.request.user)
+
+
+from apps.orders.models import Coupon
+from django.utils import timezone
+from datetime import timedelta
+import uuid
+
+class RedeemLoyaltyView(APIView):
+    """
+    Convert loyalty points into a discount coupon.
+    100 points = $10 discount.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if not hasattr(user, 'loyalty_profile'):
+            return Response({'error': 'Profil de fidélité non trouvé.'}, status=status.HTTP_404_NOT_FOUND)
+            
+        points_to_redeem = 100
+        discount_value = 10.00
+            
+        profile = user.loyalty_profile
+        if profile.points < points_to_redeem:
+            return Response({'error': f'Solde insuffisant. Il vous faut {points_to_redeem} points.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Deduct points
+        profile.points -= points_to_redeem
+        profile.save()
+        
+        # Generates a code like LOYALTY10-A1B2C3D4
+        suffix = str(uuid.uuid4()).split('-')[0].upper()
+        code = f"LOYALTY10-{suffix}"
+        
+        # Create Coupon
+        coupon = Coupon.objects.create(
+            code=code,
+            valid_from=timezone.now(),
+            valid_to=timezone.now() + timedelta(days=90),
+            is_active=True,
+            is_percentage=False,
+            discount_value=discount_value,
+            max_uses=1
+        )
+        
+        return Response({
+            'message': 'Points convertis avec succès !',
+            'coupon_code': coupon.code,
+            'discount': coupon.discount_value,
+            'remaining_points': profile.points
+        }, status=status.HTTP_201_CREATED)

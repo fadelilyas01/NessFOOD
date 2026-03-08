@@ -9,6 +9,7 @@ from .views import (
     ChangePasswordView,
     ShippingAddressListCreateView,
     ShippingAddressDetailView,
+    RedeemLoyaltyView,
 )
 
 urlpatterns = [
@@ -16,4 +17,5 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
     path('addresses/', ShippingAddressListCreateView.as_view(), name='address_list'),
     path('addresses/<int:pk>/', ShippingAddressDetailView.as_view(), name='address_detail'),
+    path('loyalty/redeem/', RedeemLoyaltyView.as_view(), name='redeem_loyalty'),
 ]

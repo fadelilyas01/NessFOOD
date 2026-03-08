@@ -112,6 +112,13 @@ class PaymentStatusView(APIView):
                 order.status = Order.Status.PAID
                 order.paid_at = timezone.now()
                 order.save()
+                
+                # Accredit Loyalty Points
+                if hasattr(order.user, 'loyalty_profile'):
+                    points = int(order.total)
+                    order.user.loyalty_profile.points += points
+                    order.user.loyalty_profile.total_points_earned += points
+                    order.user.loyalty_profile.save()
         
         return Response({
             'order_number': order.order_number,
@@ -151,6 +158,13 @@ class PaymentSuccessView(APIView):
                         if session.payment_intent:
                             order.stripe_payment_intent_id = session.payment_intent
                         order.save()
+                        
+                        # Accredit Loyalty Points
+                        if hasattr(order.user, 'loyalty_profile'):
+                            points = int(order.total)
+                            order.user.loyalty_profile.points += points
+                            order.user.loyalty_profile.total_points_earned += points
+                            order.user.loyalty_profile.save()
             
             return Response({
                 'message': 'Paiement réussi !',

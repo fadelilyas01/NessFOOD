@@ -80,3 +80,45 @@ class ShippingAddress(models.Model):
                 user=self.user, is_default=True
             ).update(is_default=False)
         super().save(*args, **kwargs)
+
+
+class LoyaltyProfile(models.Model):
+    """
+    Profil de fidélité pour accumuler des points lors des achats.
+    """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='loyalty_profile'
+    )
+    points = models.PositiveIntegerField(
+        default=0,
+        help_text="Points de fidélité disponibles"
+    )
+    total_points_earned = models.PositiveIntegerField(
+        default=0,
+        help_text="Total historique des points cumulés"
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Profil de Fidélité'
+        verbose_name_plural = 'Profils de Fidélité'
+
+    def __str__(self):
+        return f"Fidélité de {self.user.email} - {self.points} pts"
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_user_loyalty_profile(sender, instance, created, **kwargs):
+    if created:
+        LoyaltyProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_loyalty_profile(sender, instance, **kwargs):
+    if hasattr(instance, 'loyalty_profile'):
+        instance.loyalty_profile.save()
+

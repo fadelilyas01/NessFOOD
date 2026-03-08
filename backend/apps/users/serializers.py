@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from .models import ShippingAddress
+from .models import ShippingAddress, LoyaltyProfile
 
 User = get_user_model()
 
@@ -77,17 +77,27 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+class LoyaltyProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Loyalty Profile.
+    """
+    class Meta:
+        model = LoyaltyProfile
+        fields = ['points', 'total_points_earned']
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for user profile.
     """
     full_name = serializers.ReadOnlyField()
+    loyalty_profile = LoyaltyProfileSerializer(read_only=True)
     
     class Meta:
         model = User
         fields = [
             'id', 'email', 'username', 'first_name', 'last_name',
-            'full_name', 'phone', 'role', 'created_at'
+            'full_name', 'phone', 'role', 'created_at', 'loyalty_profile'
         ]
         read_only_fields = ['id', 'email', 'role', 'created_at']
 

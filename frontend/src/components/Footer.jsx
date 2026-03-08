@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import logo from '../assets/images/logo.png';
 import './Footer.css';
 
 export default function Footer() {
@@ -11,7 +12,7 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="footer-brand">
                         <Link to="/" className="footer-logo">
-                            <span className="logo-icon">🍲</span>
+                            <img src={logo} alt="Ness Food" className="logo-img" style={{ height: '40px', width: 'auto' }} />
                             <span className="logo-name">Ness Food</span>
                         </Link>
                         <p className="footer-description">
