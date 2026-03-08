@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { useCart } from '../context/useCart';
 import { useWishlist } from '../context/useWishlist';
 import { toast } from 'react-hot-toast';
@@ -7,6 +9,7 @@ import './ProductCard.css';
 export default function ProductCard({ product }) {
     const { addToCart } = useCart();
     const { toggleWishlist, isInWishlist } = useWishlist();
+    const [imgState, setImgState] = useState('loading'); // 'loading', 'loaded', 'error'
 
     const handleAddToCart = async (e) => {
         e.preventDefault();
@@ -29,11 +32,22 @@ export default function ProductCard({ product }) {
         >
             <Link to={`/produit/${product.id}`} className="product-link">
                 <div className="product-image-container">
-                    <img
-                        src={product.primary_image || product.image_url || product.image || 'https://placehold.co/400x300?text=Produit'}
-                        alt={product.name}
-                        className="product-image"
-                    />
+                    {imgState === 'loading' && (
+                        <div className="product-image-skeleton shimmer"></div>
+                    )}
+                    {imgState === 'error' ? (
+                        <div className="product-image-fallback">
+                            <span>Ness Food</span>
+                        </div>
+                    ) : (
+                        <img
+                            src={product.primary_image || product.image_url || product.image || 'https://placehold.co/400x300?text=Indisponible'}
+                            alt={product.name}
+                            className={`product-image ${imgState === 'loaded' ? 'visible' : 'hidden'}`}
+                            onLoad={() => setImgState('loaded')}
+                            onError={() => setImgState('error')}
+                        />
+                    )}
                     <div className="product-tags-container" style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
                         {product.tags && product.tags.map(tag => (
                             <span key={tag.id} className="badge" style={{ backgroundColor: tag.color || '#var(--color-primary)' }}>

@@ -31,6 +31,61 @@
     transform: scale(1.05);
 }
 
+.product-image.hidden {
+    opacity: 0;
+}
+
+.product-image.visible {
+    opacity: 1;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.product-image-skeleton {
+    position: absolute;
+    inset: 0;
+    background: #e2e8f0;
+}
+
+.product-image-skeleton.shimmer {
+    background: linear-gradient(90deg, #e2e8f0 25%, #cbd5e1 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.product-image-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-beige);
+    color: var(--color-orange);
+    font-weight: 700;
+    font-size: var(--text-xl);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
 .product-badge {
     position: absolute;
     top: var(--space-3);

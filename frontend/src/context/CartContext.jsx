@@ -12,31 +12,14 @@ export function CartProvider({ children }) {
     const [cartTotal, setCartTotal] = useState(0);
     const [shippingCost, setShippingCost] = useState(0);
 
-    // Charger le panier depuis le backend si authentifié
-    useEffect(() => {
-        if (isAuthenticated) {
-            loadCart();
-        } else {
-            // Charger depuis localStorage pour les invités
-            const savedCart = localStorage.getItem('nessfood_cart');
-            if (savedCart) {
-                try {
-                    const parsed = JSON.parse(savedCart);
-                    setCartItems(parsed);
-                    calculateTotal(parsed);
-                } catch {
-                    setCartItems([]);
-                }
-            }
-        }
-    }, [isAuthenticated, loadCart]);
-
-    // Sauvegarder dans localStorage si non authentifié
-    useEffect(() => {
-        if (!isAuthenticated && cartItems.length > 0) {
-            localStorage.setItem('nessfood_cart', JSON.stringify(cartItems));
-        }
-    }, [cartItems, isAuthenticated]);
+    const calculateTotal = useCallback((items) => {
+        const total = items.reduce((sum, item) => {
+            const price = item.product_price || item.price || 0;
+            return sum + (price * item.quantity);
+        }, 0);
+        setCartTotal(total);
+        setShippingCost(total >= 35 ? 0 : 4.99);
+    }, []);
 
     const loadCart = useCallback(async () => {
         if (!isAuthenticated) return;
@@ -55,14 +38,31 @@ export function CartProvider({ children }) {
         }
     }, [isAuthenticated]);
 
-    const calculateTotal = (items) => {
-        const total = items.reduce((sum, item) => {
-            const price = item.product_price || item.price || 0;
-            return sum + (price * item.quantity);
-        }, 0);
-        setCartTotal(total);
-        setShippingCost(total >= 35 ? 0 : 4.99);
-    };
+    // Charger le panier depuis le backend si authentifié
+    useEffect(() => {
+        if (isAuthenticated) {
+            loadCart();
+        } else {
+            // Charger depuis localStorage pour les invités
+            const savedCart = localStorage.getItem('nessfood_cart');
+            if (savedCart) {
+                try {
+                    const parsed = JSON.parse(savedCart);
+                    setCartItems(parsed);
+                    calculateTotal(parsed);
+                } catch {
+                    setCartItems([]);
+                }
+            }
+        }
+    }, [isAuthenticated, loadCart, calculateTotal]);
+
+    // Sauvegarder dans localStorage si non authentifié
+    useEffect(() => {
+        if (!isAuthenticated && cartItems.length > 0) {
+            localStorage.setItem('nessfood_cart', JSON.stringify(cartItems));
+        }
+    }, [cartItems, isAuthenticated]);
 
     const addToCart = useCallback(async (product, quantity = 1) => {
         if (isAuthenticated) {
@@ -110,7 +110,7 @@ export function CartProvider({ children }) {
             });
             return { success: true };
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, calculateTotal]);
 
     const removeFromCart = useCallback(async (itemId) => {
         if (isAuthenticated) {
@@ -136,7 +136,7 @@ export function CartProvider({ children }) {
                 return newItems;
             });
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, calculateTotal]);
 
     const updateQuantity = useCallback(async (itemId, quantity) => {
         if (quantity < 1) {
@@ -168,7 +168,7 @@ export function CartProvider({ children }) {
                 return newItems;
             });
         }
-    }, [isAuthenticated, removeFromCart]);
+    }, [isAuthenticated, removeFromCart, calculateTotal]);
 
     const clearCart = useCallback(async () => {
         if (isAuthenticated) {
