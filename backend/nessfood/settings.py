@@ -209,6 +209,10 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Ness Food <noreply@nessfoo
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Ensure logs directory exists
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
 # Logging Configuration
 LOGGING = {
     'version': 1,
@@ -226,7 +230,7 @@ LOGGING = {
         },
         'file': {
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'payments.log',
+            'filename': LOGS_DIR / 'payments.log',
             'formatter': 'verbose',
         },
     },
