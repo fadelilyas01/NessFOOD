@@ -117,6 +117,22 @@ npm run dev
 
 L'application frontend sera servie sur `http://localhost:5173`. Les points de terminaison de l'API sont préconfigurés pour cibler `http://localhost:8000/api/v1` dans `frontend/src/services/apiClient.js`.
 
+## Comptes de Test (Défaut)
+
+Pour faciliter vos tests et l'exploration de la plateforme en environnement local, les profils de test suivants sont pré-générés ou peuvent être créés simplement :
+
+### 👑 Administrateur (Gestion Backoffice)
+
+* **Email** : `admin@nessfood.com`
+* **Mot de passe** : `Admin123!`
+* **Accès** : `http://localhost:8000/admin` (Gestion des produits, codes promo, commandes)
+
+### 👤 Client (Boutique Frontend)
+
+* **Email** : `client@nessfood.com`
+* **Mot de passe** : `Client123!`
+* **Accès** : `http://localhost:5173/` (Commandes, paiement Stripe, wishlist)
+
 ## Intégration API & Authentification
 
 1. **Client API** : Toutes les requêtes HTTP sortantes vers le backend Django sont acheminées via une instance Axios configurée (`apiClient.js`).
