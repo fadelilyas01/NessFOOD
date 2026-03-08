@@ -2,8 +2,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as Sentry from '@sentry/react'
-import './index.css'
+import { registerSW } from 'virtual:pwa-register'
+import './styles/index.css'
 import App from './App.jsx'
+
+// Register PWA Service Worker
+registerSW({ immediate: true })
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN || "",

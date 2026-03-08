@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { useCart } from '../context/useCart';
-import './Login.css';
+import '../styles/Login.css';
 
 export default function Login() {
     const navigate = useNavigate();

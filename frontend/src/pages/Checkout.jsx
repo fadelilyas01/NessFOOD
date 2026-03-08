@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/useCart';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
-import './Checkout.css';
+import '../styles/Checkout.css';
 
 export default function Checkout() {
     const { cartItems, cartTotal } = useCart();

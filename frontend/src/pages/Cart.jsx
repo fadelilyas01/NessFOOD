@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/useCart';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
-import './Cart.css';
+import '../styles/Cart.css';
 
 export default function Cart() {
     const { cartItems, updateQuantity, removeFromCart, cartTotal, clearCart } = useCart();

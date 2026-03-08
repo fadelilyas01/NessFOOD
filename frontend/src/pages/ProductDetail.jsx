@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/useCart';
 import { useProductQuery } from '../hooks/useProductsQuery';
 import ProductCard from '../components/ProductCard';
-import './ProductDetail.css';
+import '../styles/ProductDetail.css';
 
 export default function ProductDetail() {
     const { id } = useParams();

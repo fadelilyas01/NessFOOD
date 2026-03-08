@@ -7,7 +7,7 @@ import { useWishlist } from '../context/useWishlist';
 import ThemeToggle from './ThemeToggle';
 import SearchBar from './SearchBar';
 import logo from '../assets/images/logo.png';
-import './Header.css';
+import '../styles/Header.css';
 
 export default function Header() {
     const { cartCount } = useCart();
@@ -105,6 +105,11 @@ export default function Header() {
                                         <Link to="/profil" className="dropdown-link">Mon profil</Link>
                                         <Link to="/commandes" className="dropdown-link">Mes commandes</Link>
                                         <Link to="/fidelite" className="dropdown-link">⭐ Ma Fidélité</Link>
+                                        {user?.role === 'admin' && (
+                                            <Link to="/admin/dashboard" className="dropdown-link" style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>
+                                                📊 Dashboard Admin
+                                            </Link>
+                                        )}
                                         <button onClick={handleLogout} className="dropdown-link logout-btn">
                                             Déconnexion
                                         </button>

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import logo from '../assets/images/logo.png';
-import './Footer.css';
+import '../styles/Footer.css';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();

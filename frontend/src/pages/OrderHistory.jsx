@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as api from '../services/api';
-import './OrderHistory.css';
+import '../styles/OrderHistory.css';
 
 export default function OrderHistory() {
     const [orders, setOrders] = useState([]);

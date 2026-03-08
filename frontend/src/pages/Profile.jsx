@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/useAuth';
 import * as api from '../services/api';
-import './Profile.css';
+import '../styles/Profile.css';
 
 export default function Profile() {
     const { user, logout } = useAuth();

@@ -18,3 +18,8 @@ export async function createOrder(shippingInfo) {
         return { ok: false, data: error.response?.data };
     }
 }
+
+export async function getAnalytics() {
+    const response = await apiClient.get('/orders/admin/analytics/');
+    return response.data;
+}

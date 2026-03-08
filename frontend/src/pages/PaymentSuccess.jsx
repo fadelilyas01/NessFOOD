@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getPaymentSuccess } from '../services/paymentService';
 import { useCart } from '../context/useCart';
-import './PaymentResult.css';
+import '../styles/PaymentResult.css';
 
 export default function PaymentSuccess() {
     const [searchParams] = useSearchParams();

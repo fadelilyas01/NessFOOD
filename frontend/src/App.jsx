@@ -21,9 +21,10 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import OrderHistory from './pages/OrderHistory';
 import Loyalty from './pages/Loyalty';
+import AdminDashboard from './pages/AdminDashboard';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
-import './index.css';
+import './styles/index.css';
 
 import { FAQ, Shipping, Returns, Legal, Privacy, Terms } from './pages/InfoPages';
 
@@ -73,6 +74,7 @@ function App() {
                     <Route path="/profil" element={<Profile />} />
                     <Route path="/commandes" element={<OrderHistory />} />
                     <Route path="/fidelite" element={<Loyalty />} />
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
                     {/* Info Pages */}
                     <Route path="/faq" element={<FAQ />} />

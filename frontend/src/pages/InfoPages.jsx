@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import './InfoPages.css';
+import '../styles/InfoPages.css';
 
 export function FAQ() {
     return (

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { useCart } from '../context/useCart';
 import { useWishlist } from '../context/useWishlist';
 import { toast } from 'react-hot-toast';
-import './ProductCard.css';
+import '../styles/ProductCard.css';
 
 export default function ProductCard({ product }) {
     const { addToCart } = useCart();

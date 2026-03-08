@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/useAuth';
 import * as userService from '../services/users.service';
-import './Loyalty.css';
+import '../styles/Loyalty.css';
 
 export default function Loyalty() {
     const { user, refreshProfile } = useAuth();

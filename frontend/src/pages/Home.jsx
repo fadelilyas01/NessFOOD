@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 import ProductCard from '../components/ProductCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { useProductsQuery } from '../hooks/useProductsQuery';
-import './Home.css';
+import '../styles/Home.css';
 
 // Animation variants
 const fadeInUp = {

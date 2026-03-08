@@ -10,6 +10,7 @@ from .views import (
     AdminOrderListView,
     AdminUpdateOrderView,
     ValidateCouponView,
+    AnalyticsView,
 )
 
 urlpatterns = [
@@ -20,5 +21,6 @@ urlpatterns = [
     
     # Admin routes
     path('admin/list/', AdminOrderListView.as_view(), name='admin_order_list'),
+    path('admin/analytics/', AnalyticsView.as_view(), name='admin_analytics'),
     path('admin/<str:order_number>/', AdminUpdateOrderView.as_view(), name='admin_update_order'),
 ]

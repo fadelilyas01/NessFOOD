@@ -2,10 +2,11 @@ import { useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { useProductsQuery, useCategoriesQuery } from '../hooks/useProductsQuery';
-import './Shop.css';
+import '../styles/Shop.css';
 
 export default function Shop() {
     const [filter, setFilter] = useState('all');
+    const [dietaryFilter, setDietaryFilter] = useState('all');
     const [sortBy, setSortBy] = useState('featured');
 
     const { data: productsData, isLoading: isProductsLoading } = useProductsQuery();
@@ -20,7 +21,13 @@ export default function Shop() {
     ];
 
     const filteredProducts = products
-        .filter(product => filter === 'all' || product.category?.slug === filter || product.category === filter)
+        .filter(product => {
+            const categoryMatch = filter === 'all' || product.category?.slug === filter || product.category === filter;
+            const dietaryMatch = dietaryFilter === 'all' ||
+                product.tags?.some(tag => tag.name.toLowerCase() === dietaryFilter.toLowerCase()) ||
+                product.tags?.includes(dietaryFilter);
+            return categoryMatch && dietaryMatch;
+        })
         .sort((a, b) => {
             switch (sortBy) {
                 case 'price-asc':
@@ -82,6 +89,30 @@ export default function Shop() {
                                 </button>
                             ))}
                         </div>
+
+                        {/* Dietary Filters */}
+                        <div className="filter-dietary" style={{ marginTop: '1rem', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                            {['all', 'Végétarien', 'Épicé', 'Halal'].map(diet => (
+                                <button
+                                    key={diet}
+                                    className={`filter-btn-sm ${dietaryFilter === diet ? 'active' : ''}`}
+                                    onClick={() => setDietaryFilter(diet)}
+                                    style={{
+                                        padding: '5px 15px',
+                                        borderRadius: '20px',
+                                        border: '1px solid var(--color-border)',
+                                        backgroundColor: dietaryFilter === diet ? 'var(--color-primary)' : 'transparent',
+                                        color: dietaryFilter === diet ? 'white' : 'var(--color-text)',
+                                        fontSize: '0.85rem',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    {diet === 'all' ? 'Tous les régimes' : diet}
+                                </button>
+                            ))}
+                        </div>
+
                         <div className="filter-sort">
                             <label htmlFor="sort">Trier par:</label>
                             <select

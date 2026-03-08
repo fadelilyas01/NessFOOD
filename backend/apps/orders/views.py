@@ -15,6 +15,9 @@ from .serializers import (
 from apps.cart.models import Cart
 from .models import Coupon
 from django.utils import timezone
+from django.db.models import Sum, Count, F
+from django.db.models.functions import TruncDate
+from datetime import timedelta
 
 
 class OrderListView(generics.ListAPIView):
@@ -192,4 +195,63 @@ class ValidateCouponView(APIView):
                 'is_percentage': coupon.is_percentage,
                 'discount_value': float(coupon.discount_value)
             }
+        })
+
+class AnalyticsView(APIView):
+    """
+    Get order statistics for the admin dashboard.
+    """
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        today = timezone.now().date()
+        seven_days_ago = today - timedelta(days=7)
+        thirty_days_ago = today - timedelta(days=30)
+
+        # 1. Overall Stats (30 days)
+        stats_30d = Order.objects.filter(
+            created_at__date__gte=thirty_days_ago,
+            status=Order.Status.PAID
+        ).aggregate(
+            total_revenue=Sum('total'),
+            order_count=Count('id')
+        )
+
+        # 2. Revenue by day (last 7 days)
+        daily_revenue = Order.objects.filter(
+            created_at__date__gte=seven_days_ago,
+            status=Order.Status.PAID
+        ).annotate(
+            date=TruncDate('created_at')
+        ).values('date').annotate(
+            revenue=Sum('total')
+        ).order_by('date')
+
+        # 3. Top Products (Top 5)
+        top_products = OrderItem.objects.filter(
+            order__status=Order.Status.PAID
+        ).values(
+            'product__name'
+        ).annotate(
+            total_quantity=Sum('quantity'),
+            total_sales=Sum(F('quantity') * F('product_price'))
+        ).order_by('-total_quantity')[:5]
+
+        return Response({
+            'summary': {
+                'revenue_30d': float(stats_30d['total_revenue'] or 0),
+                'orders_30d': stats_30d['order_count'] or 0,
+            },
+            'daily_revenue': [
+                {'date': item['date'].strftime('%Y-%m-%d'), 'revenue': float(item['revenue'] or 0)}
+                for item in daily_revenue
+            ],
+            'top_products': [
+                {
+                    'name': item['product__name'],
+                    'quantity': item['total_quantity'],
+                    'sales': float(item['total_sales'] or 0)
+                }
+                for item in top_products
+            ]
         })

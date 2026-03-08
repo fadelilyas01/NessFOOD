@@ -1,4 +1,4 @@
-import './SkeletonLoader.css';
+import '../styles/SkeletonLoader.css';
 
 export default function SkeletonLoader({ type = 'card', count = 1 }) {
     const renderSkeleton = (index) => {
